@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teamtag – Sprungbude Bad Cannstatt</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --bg-secondary: #f5f4f0;
+      --bg-tertiary: #eeede9;
+      --text-primary: #1a1a18;
+      --text-secondary: #6b6b65;
+      --border: rgba(0,0,0,0.12);
+      --border-hover: rgba(0,0,0,0.25);
+      --green: #1D9E75;
+      --green-light: #e1f5ee;
+      --green-text: #085041;
+      --green-border: #5dcaa5;
+      --red: #e24b4a;
+      --red-light: #fcebeb;
+      --red-text: #791f1f;
+      --red-border: #f09595;
+      --blue-light: #e6f1fb;
+      --blue-text: #185fa5;
+      --blue-border: #85b7eb;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1e1e1c;
+        --bg-secondary: #2a2a27;
+        --bg-tertiary: #333330;
+        --text-primary: #f0efe9;
+        --text-secondary: #9a9990;
+        --border: rgba(255,255,255,0.12);
+        --border-hover: rgba(255,255,255,0.25);
+        --green-light: #04342c;
+        --green-text: #9fe1cb;
+        --green-border: #0f6e56;
+        --red-light: #501313;
+        --red-text: #f7c1c1;
+        --red-border: #a32d2d;
+        --blue-light: #042c53;
+        --blue-text: #b5d4f4;
+        --blue-border: #185fa5;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 2.5rem 0 1.5rem;
+    }
+    .hero-icon { font-size: 36px; margin-bottom: 10px; }
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .hero .sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+    }
+
+    /* Info grid */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      margin: 1.5rem 0;
+    }
+    .info-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+    }
+    .info-card .label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+    }
+    .info-card .value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* Section title */
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin: 2rem 0 0.75rem;
+    }
+
+    /* Ablauf */
+    .ablauf-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .ablauf-list { list-style: none; }
+    .ablauf-list li {
+      display: flex;
+      gap: 14px;
+      align-items: baseline;
+      padding: 11px 16px;
+      border-bottom: 0.5px solid var(--border);
+      font-size: 14px;
+    }
+    .ablauf-list li:last-child { border-bottom: none; }
+    .ablauf-list .time {
+      color: var(--text-secondary);
+      font-size: 13px;
+      min-width: 44px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Signal box */
+    .signal-box {
+      background: var(--green-light);
+      border: 0.5px solid var(--green-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin: 1.5rem 0;
+      font-size: 14px;
+      color: var(--green-text);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .signal-box .icon { font-size: 16px; margin-top: 1px; flex-shrink: 0; }
+
+    /* Cars */
+    .cars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 420px) {
+      .cars-grid { grid-template-columns: 1fr; }
+    }
+    .car-card {
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 14px;
+      transition: border-color 0.2s;
+    }
+    .car-card.full { border-color: var(--red); }
+    .car-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .car-name { font-size: 17px; font-weight: 600; color: var(--text-primary); }
+    .car-count { font-size: 12px; color: var(--text-secondary); }
+    .car-count.full { color: var(--red-text); font-weight: 600; }
+    .seats-bar {
+      height: 4px;
+      background: var(--bg-secondary);
+      border-radius: 99px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .seats-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: var(--green);
+      transition: width 0.35s ease;
+    }
+    .seats-fill.full { background: var(--red); }
+    .passenger-list { min-height: 30px; margin-bottom: 10px; }
+    .passenger-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-secondary);
+      border-radius: 99px;
+      font-size: 12px;
+      padding: 3px 8px 3px 10px;
+      margin: 2px 2px;
+      color: var(--text-primary);
+    }
+    .chip-remove {
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+    .chip-remove:hover { color: var(--red); }
+    .join-btn {
+      width: 100%;
+      font-size: 13px;
+      padding: 8px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s;
+    }
+    .join-btn:hover:not(:disabled) { background: var(--bg-tertiary); }
+    .join-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* Full notice */
+    .full-notice {
+      background: var(--red-light);
+      border: 0.5px solid var(--red-border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-top: 1.25rem;
+      font-size: 14px;
+      color: var(--red-text);
+      display: none;
+    }
+    .full-notice.visible { display: block; }
+
+    /* Reset link */
+    .reset-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 2.5rem;
+    }
+    .reset-link {
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .reset-link:hover { color: var(--text-primary); }
+
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s;
+    }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      width: 300px;
+      border: 0.5px solid var(--border);
+      transform: translateY(6px);
+      transition: transform 0.15s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    .modal input {
+      width: 100%;
+      font-size: 14px;
+      padding: 9px 11px;
+      border-radius: var(--radius-md);
+      border: 0.5px solid var(--border);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      font-family: inherit;
+      outline: none;
+    }
+    .modal input:focus { border-color: var(--border-hover); }
+    .modal-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    .modal-btns { display: flex; gap: 8px; }
+    .modal-btns button {
+      flex: 1;
+      padding: 9px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      cursor: pointer;
+      border: 0.5px solid var(--border);
+      font-family: inherit;
+      font-weight: 500;
+      transition: opacity 0.15s;
+    }
+    .modal-btns button:hover { opacity: 0.8; }
+    .btn-cancel { background: var(--bg-secondary); color: var(--text-primary); }
+    .btn-reset { background: var(--red-light); color: var(--red-text); border-color: var(--red-border); }
+    .btn-submit { background: var(--blue-light); color: var(--blue-text); border-color: var(--blue-border); }
+    .pw-error { font-size: 12px; color: var(--red-text); min-height: 18px; margin-bottom: 8px; }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hero">
+    <div class="hero-icon">🚐</div>
+    <h1>Teamtag – Sprungbude</h1>
+    <div class="sub">Royal Rangers · Samstag, 19. April 2025 · Bad Cannstatt</div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card"><div class="label">Abfahrt</div><div class="value">09:00 Uhr</div></div>
+    <div class="info-card"><div class="label">Kosten</div><div class="value">~18 € p.P.</div></div>
+    <div class="info-card"><div class="label">Treffpunkt</div><div class="value">Gemeindehaus</div></div>
+    <div class="info-card"><div class="label">Rückkehr</div><div class="value">ca. 17:00 Uhr</div></div>
+  </div>
+
+  <div class="section-title">Ablauf</div>
+  <div class="ablauf-card">
+    <ul class="ablauf-list">
+      <li><span class="time">09:00</span><span>Abfahrt beim Gemeindehaus</span></li>
+      <li><span class="time">09:30</span><span>Ankunft Sprungbude Bad Cannstatt</span></li>
+      <li><span class="time">09:30</span><span>Freizeit &amp; Springen</span></li>
+      <li><span class="time">12:30</span><span>Mittagessen (selbst organisieren)</span></li>
+      <li><span class="time">14:00</span><span>Teambesprechung &amp; Planung</span></li>
+      <li><span class="time">16:30</span><span>Rückfahrt</span></li>
+    </ul>
+  </div>
+
+  <div class="signal-box">
+    <span class="icon">✉</span>
+    <span><strong>Anmeldung über Signal.</strong> Bitte bis Donnerstag im Gruppen-Chat anmelden. Mitnahme von Socken nicht vergessen!</span>
+  </div>
+
+  <div class="section-title">Fahrtenliste – Platz reservieren</div>
+  <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Trag deinen Namen unter dem gewünschten Auto ein. Maximal 4 Plätze pro Auto.</div>
+  <div class="cars-grid" id="cars-grid"></div>
+  <div class="full-notice" id="full-notice">
+    Alle Plätze bei Arian und Kadda sind belegt. Bitte eigenständig Fahrgemeinschaften organisieren und im Signal-Chat Bescheid geben.
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-link" onclick="openResetModal()">Liste zurücksetzen</button>
+  </div>
+
+  <footer>Royal Rangers Teamtag 2025</footer>
+</div>
+
+<!-- Name modal -->
+<div class="modal-backdrop" id="name-modal">
+  <div class="modal">
+    <h3 id="modal-title">Platz reservieren</h3>
+    <input type="text" id="name-input" placeholder="Dein Name" maxlength="30" autocomplete="off" />
+    <div class="modal-sub" id="modal-sub"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeNameModal()">Abbrechen</button>
+      <button class="btn-submit" onclick="submitName()">Eintragen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Reset modal -->
+<div class="modal-backdrop" id="reset-modal">
+  <div class="modal">
+    <h3>Liste zurücksetzen</h3>
+    <input type="password" id="pw-input" placeholder="Passwort" autocomplete="off" />
+    <div class="pw-error" id="pw-error"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeResetModal()">Abbrechen</button>
+      <button class="btn-reset" onclick="doReset()">Zurücksetzen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SEATS = 4;
+  const PW = "rangers2025";
+  const CARS = ["Arian", "Kadda"];
+  let state = { Arian: [], Kadda: [] };
+  let pendingCar = null;
+
+  try {
+    const saved = localStorage.getItem("teamtag_v1");
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+
+  function save() {
+    try { localStorage.setItem("teamtag_v1", JSON.stringify(state)); } catch(e) {}
+  }
+
+  function render() {
+    const grid = document.getElementById("cars-grid");
+    const allFull = CARS.every(c => state[c].length >= SEATS);
+    document.getElementById("full-notice").classList.toggle("visible", allFull);
+    grid.innerHTML = "";
+    CARS.forEach(car => {
+      const p = state[car];
+      const full = p.length >= SEATS;
+      const pct = Math.round(p.length / SEATS * 100);
+      const card = document.createElement("div");
+      card.className = "car-card" + (full ? " full" : "");
+      card.innerHTML =
+        '<div class="car-header">' +
+          '<span class="car-name">' + car + '</span>' +
+          '<span class="car-count' + (full ? " full" : "") + '">' + p.length + '/' + SEATS + '</span>' +
+        '</div>' +
+        '<div class="seats-bar"><div class="seats-fill' + (full ? " full" : "") + '" style="width:' + pct + '%"></div></div>' +
+        '<div class="passenger-list">' +
+          p.map(function(n, i) {
+            return '<span class="passenger-chip"><span>' + escHtml(n) + '</span>' +
+              '<button class="chip-remove" onclick="remove(\'' + car + '\',' + i + ')" title="Entfernen">\u00d7</button></span>';
+          }).join("") +
+        '</div>' +
+        '<button class="join-btn"' + (full ? " disabled" : "") + ' onclick="openNameModal(\'' + car + '\')">' +
+          (full ? "Belegt" : "+ Platz reservieren") +
+        '</button>';
+      grid.appendChild(card);
+    });
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  }
+
+  function remove(car, idx) {
+    state[car].splice(idx, 1);
+    save(); render();
+  }
+
+  function openNameModal(car) {
+    pendingCar = car;
+    document.getElementById("modal-title").textContent = "Platz bei " + car + " reservieren";
+    document.getElementById("modal-sub").textContent = "Noch " + (SEATS - state[car].length) + " Platz/Plätze frei";
+    document.getElementById("name-input").value = "";
+    document.getElementById("name-modal").classList.add("open");
+    setTimeout(function() { document.getElementById("name-input").focus(); }, 50);
+  }
+
+  function closeNameModal() {
+    document.getElementById("name-modal").classList.remove("open");
+    pendingCar = null;
+  }
+
+  function submitName() {
+    var name = document.getElementById("name-input").value.trim();
+    if (!name || !pendingCar) return;
+    if (state[pendingCar].length < SEATS) {
+      state[pendingCar].push(name);
+      save(); render();
+    }
+    closeNameModal();
+  }
+
+  function openResetModal() {
+    document.getElementById("pw-input").value = "";
+    document.getElementById("pw-error").textContent = "";
+    document.getElementById("reset-modal").classList.add("open");
+    setTimeout(function() { document.getElementById("pw-input").focus(); }, 50);
+  }
+
+  function closeResetModal() {
+    document.getElementById("reset-modal").classList.remove("open");
+  }
+
+  function doReset() {
+    if (document.getElementById("pw-input").value !== PW) {
+      document.getElementById("pw-error").textContent = "Falsches Passwort.";
+      return;
+    }
+    state = { Arian: [], Kadda: [] };
+    save(); render();
+    closeResetModal();
+  }
+
+  document.getElementById("name-input").addEventListener("keydown", function(e) { if (e.key === "Enter") submitName(); });
+  document.getElementById("pw-input").addEventListener("keydown", function(e) { if (e.key === "Enter") doReset(); });
+
+  document.getElementById("name-modal").addEventListener("click", function(e) { if (e.target === this) closeNameModal(); });
+  document.getElementById("reset-modal").addEventListener("click", function(e) { if (e.target === this) closeResetModal(); });
+
+  render();
+</script>
+</body>
+</html>
