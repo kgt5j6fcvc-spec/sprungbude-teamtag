@@ -252,10 +252,11 @@
     <div class="section-title">Ablauf</div>
     <div class="ablauf-card">
       <ul class="ablauf-list">
-        <li><span class="time">09:30</span><div><div class="event">Treffen auf der Rangerwiese</div><div class="event-note">Bitte pünktlich erscheinen</div></div></li>
-        <li><span class="time">09:45</span><div><div class="event">Abfahrt zur Sprungbude</div><div class="event-note">Gemäß Fahrtenliste</div></div></li>
+        <li><span class="time">09:30</span><div><div class="event">Treffen auf der Rangerwiese</div><div class="event-note">Nur für Mitfahrende bei Arian &amp; Kadda</div></div></li>
+        <li><span class="time">09:45</span><div><div class="event">Abfahrt zur Sprungbude</div><div class="event-note">Gemäß Fahrtenliste · Bei eigener Anreise: Treffpunkt vor Ort 10:15 Uhr</div></div></li>
+        <li><span class="time">10:15</span><div><div class="event">Treffpunkt vor Ort</div><div class="event-note">Für alle mit eigener Fahrgemeinschaft · Sprungbude Bad Cannstatt</div></div></li>
         <li><span class="time">10:30</span><div><div class="event">Sprungzeit – 60 Minuten</div><a class="event-link" href="https://www.jumphouse.de/sprungbude/wp-content/uploads/sites/3/2025/02/Sprungregeln.pdf" target="_blank" rel="noopener">Alle wichtigen Sprungregeln ↗</a></div></li>
-        <li><span class="time">11:45</span><div><div class="event">Rückfahrt zur Rangerwiese</div></div></li>
+        <li><span class="time">11:45</span><div><div class="event">Rückfahrt zur Rangerwiese</div><div class="event-note">Bei eigener Anreise: Ende vor Ort · Abfahrt selbst organisieren</div></div></li>
         <li><span class="time">12:15</span><div><div class="event">Ende auf der Rangerwiese</div><div class="event-note">Abholung durch Eltern möglich</div></div></li>
       </ul>
     </div>
@@ -278,6 +279,7 @@
           <option>Hummeln</option>
         </select>
         <label>Fahrgemeinschaft</label>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5;">Ihr könnt entweder <strong style="color:var(--text-primary);">selbst eine Fahrgemeinschaft organisieren</strong> – Treffpunkt ist dann direkt vor Ort – oder ihr fahrt <strong style="color:var(--text-primary);">mit Arian oder Kadda mit</strong>, solange noch Plätze frei sind.</p>
         <div class="reg-car-group">
           <div class="car-option" id="opt-arian" onclick="selectCar('Arian')">
             <div class="opt-name">Arian</div>
@@ -288,9 +290,20 @@
             <div class="opt-seats" id="opt-kadda-seats">lädt …</div>
           </div>
         </div>
-        <div class="reg-note">Wenn beide Autos voll sind, bitte eigenständig Fahrgemeinschaft organisieren.</div>
+        <div class="reg-note">Kein Platz mehr? Einfach selbst organisieren und direkt vor Ort erscheinen.</div>
         <button class="reg-submit" onclick="submitRegistration()">Jetzt anmelden</button>
         <div class="reg-error" id="reg-error"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Abmeldung</div>
+    <div class="reg-card" id="cancel-card">
+      <div id="cancel-form-inner">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5;">Kannst du doch nicht teilnehmen? Trag deinen Namen ein um dich abzumelden.</p>
+        <label for="cancel-name">Vorname</label>
+        <input type="text" id="cancel-name" placeholder="Dein Vorname" maxlength="40" autocomplete="off" />
+        <button class="reg-submit" style="background:var(--bg-secondary);color:var(--text-primary);border:0.5px solid var(--border);" onclick="submitCancellation()">Abmelden</button>
+        <div class="reg-error" id="cancel-error"></div>
       </div>
     </div>
 
@@ -615,6 +628,29 @@ function showLoader(title,sub,success) {
   document.getElementById("mini-loader").classList.add("visible");
 }
 function hideLoader() { document.getElementById("mini-loader").classList.remove("visible"); }
+async function submitCancellation() {
+  const nameEl = document.getElementById("cancel-name");
+  const errEl  = document.getElementById("cancel-error");
+  errEl.textContent = "";
+  const name = sanitize(nameEl.value.trim());
+  if (!name || name.length < 2) { errEl.textContent = "Bitte einen gültigen Vornamen eingeben."; return; }
+  const match = allRegs.find(r => r.name.toLowerCase() === name.toLowerCase());
+  if (!match) { errEl.textContent = "Dieser Name wurde nicht gefunden."; return; }
+  showLoader("Abmeldung wird verarbeitet …", "Einen Moment bitte", false);
+  try {
+    await deleteReg(match.id);
+    await loadData(false);
+    hideLoader();
+    showLoader(name + " wurde abgemeldet.", "Schade, vielleicht beim nächsten Mal!", true);
+    await delay(2200);
+    hideLoader();
+    nameEl.value = "";
+  } catch(e) {
+    hideLoader();
+    errEl.textContent = "Fehler beim Abmelden. Bitte erneut versuchen.";
+  }
+}
+
 function toggleLegal() { document.getElementById("legal-box").classList.toggle("visible"); }
 function sanitize(s) { return String(s).replace(/[<>"'&;\\]/g,"").substring(0,60); }
 function delay(ms) { return new Promise(r=>setTimeout(r,ms)); }
