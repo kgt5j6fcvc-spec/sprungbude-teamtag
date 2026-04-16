@@ -278,28 +278,35 @@
           <option>Turmfalken</option>
           <option>Hummeln</option>
         </select>
-        <label>Mitfahren bei Arian oder Kadda? <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text-secondary);">Optional – nur wenn gewünscht</span></label>
-        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:10px 12px;font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5;">
-          Möchtest du mitfahren? Dann tippe auf ein Auto unten. Sonst einfach freilassen – du kommst dann selbst.
-        </div>
+        <label>Fahrgemeinschaft</label>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;line-height:1.5;">Ihr könnt entweder <strong style="color:var(--text-primary);">selbst eine Fahrgemeinschaft organisieren</strong> – Treffpunkt ist dann direkt vor Ort – oder ihr fahrt <strong style="color:var(--text-primary);">mit Arian oder Kadda mit</strong>, solange noch Plätze frei sind.</p>
         <div class="reg-car-group">
           <div class="car-option" id="opt-arian" onclick="selectCar('Arian')">
-            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">👆 Antippen zum Auswählen</div>
             <div class="opt-name">Arian</div>
             <div class="opt-seats" id="opt-arian-seats">lädt …</div>
           </div>
           <div class="car-option" id="opt-kadda" onclick="selectCar('Kadda')">
-            <div style="font-size:11px;color:var(--text-secondary);margin-bottom:4px;">👆 Antippen zum Auswählen</div>
             <div class="opt-name">Kadda</div>
             <div class="opt-seats" id="opt-kadda-seats">lädt …</div>
           </div>
         </div>
-        <div id="car-selection-hint" style="font-size:12px;color:var(--text-secondary);margin-bottom:13px;margin-top:-7px;">Kein Auto ausgewählt – du kommst selbst.</div>
+        <div class="reg-note">Kein Platz mehr? Einfach selbst organisieren und direkt vor Ort erscheinen.</div>
         <button class="reg-submit" onclick="submitRegistration()">Jetzt anmelden</button>
         <div class="reg-error" id="reg-error"></div>
       </div>
     </div>
         </div>
+
+    <div class="section-title">Abmeldung</div>
+    <div class="reg-card">
+      <div id="cancel-form-inner">
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5;">Kannst du doch nicht teilnehmen? Trag deinen Namen ein um dich abzumelden.</p>
+        <label for="cancel-name">Vorname</label>
+        <input type="text" id="cancel-name" placeholder="Dein Vorname" maxlength="40" autocomplete="off" />
+        <button class="reg-submit" style="background:var(--bg-secondary);color:var(--text-primary);border:0.5px solid var(--border);" onclick="submitCancellation()">Abmelden</button>
+        <div class="reg-error" id="cancel-error"></div>
+      </div>
+    </div>
 
     <div class="section-title">Fahrtenliste</div>
     <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px;">Belegte Plätze – wird live aktualisiert:</div>
@@ -523,18 +530,9 @@ function startCountdown() {
 
 function selectCar(car) {
   if(allRegs.filter(r=>r.car===car).length>=SEATS)return;
-  if(selectedCar===car){
-    selectedCar=null;
-    document.getElementById("opt-"+car.toLowerCase()).classList.remove("selected");
-    document.getElementById("car-selection-hint").textContent="Kein Auto ausgewählt – du kommst selbst.";
-    return;
-  }
   selectedCar=car;
   document.querySelectorAll(".car-option").forEach(el=>el.classList.remove("selected"));
   document.getElementById("opt-"+car.toLowerCase()).classList.add("selected");
-  document.getElementById("car-selection-hint").textContent="✓ Platz bei "+car+" reservieren – dann auf Anmelden tippen.";
-  document.getElementById("car-selection-hint").style.color="var(--brand-text)";
-  document.getElementById("car-selection-hint").style.fontWeight="600";
 }
 
 async function submitRegistration() {
@@ -632,6 +630,29 @@ function showLoader(title,sub,success) {
 }
 function hideLoader() { document.getElementById("mini-loader").classList.remove("visible"); }
 
+
+async function submitCancellation() {
+  const nameEl = document.getElementById("cancel-name");
+  const errEl  = document.getElementById("cancel-error");
+  errEl.textContent = "";
+  const name = sanitize(nameEl.value.trim());
+  if (!name || name.length < 2) { errEl.textContent = "Bitte einen gültigen Vornamen eingeben."; return; }
+  const match = allRegs.find(r => r.name.toLowerCase() === name.toLowerCase());
+  if (!match) { errEl.textContent = "Dieser Name wurde nicht gefunden."; return; }
+  showLoader("Abmeldung wird verarbeitet …", "Einen Moment bitte", false);
+  try {
+    await deleteReg(match.id);
+    await loadData(false);
+    hideLoader();
+    showLoader(name + " wurde abgemeldet.", "Schade, vielleicht beim nächsten Mal!", true);
+    await delay(2200);
+    hideLoader();
+    nameEl.value = "";
+  } catch(e) {
+    hideLoader();
+    errEl.textContent = "Fehler beim Abmelden. Bitte erneut versuchen.";
+  }
+}
 
 function toggleLegal() { document.getElementById("legal-box").classList.toggle("visible"); }
 function sanitize(s) { return String(s).replace(/[<>"'&;\\]/g,"").substring(0,60); }
